@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 
 function SessionForm({ button, keyboardEvent, store, obj, cancel, deleteSession, updateSession }) {
     // Modal
@@ -29,14 +29,14 @@ function SessionForm({ button, keyboardEvent, store, obj, cancel, deleteSession,
             }
 
             {/* Create Modal bootstrap-react */}
-            <Modal show={show} onHide={handleClose}>
+            <Modal size="sm" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Cadastrar Sessão</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <form>
-                        <input type='time' value={obj.hours} onChange={keyboardEvent} name='hours' className="form-control" />
-                    </form>
+                    <Form.Group className="col-sm-4 mx-auto">
+                        <Form.Control type='time' value={obj.hours} onChange={keyboardEvent} name='hours' className="form-control" />
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
@@ -51,14 +51,14 @@ function SessionForm({ button, keyboardEvent, store, obj, cancel, deleteSession,
             </Modal>
 
             {/* Update Modal bootstrap-react */}
-            <Modal show={showUpdate} onHide={handleCloseUpdate}>
+            <Modal size="sm" show={showUpdate} onHide={handleCloseUpdate}>
                 <Modal.Header closeButton>
                     <Modal.Title>Atualizar Sessão</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <form>
-                        <input type='time' value={obj.hours} onChange={keyboardEvent} name='hours' className="form-control" />
-                    </form>
+                    <Form.Group className="col-sm-5 mx-auto">
+                        <Form.Control type='time' value={obj.hours} onChange={keyboardEvent} name='hours' className="form-control" />
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseUpdate}>
