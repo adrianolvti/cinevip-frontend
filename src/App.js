@@ -1,25 +1,142 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import SessionForm from './SessionForm';
+import SessionTable from './SessionTable';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    // Objeto Session
+    const session = {
+        hours: ''
+    }
+
+    // Use State
+    const [btnCadastrar, setBtnCadastrar] = useState(true);
+    const [sessions, setSessions] = useState([]);
+    const [objSession, setObjSession] = useState(session);
+
+    // Use Effect
+    useEffect(() => {
+        fetch("http://localhost:8080/api/session")
+            .then(response => response.json())
+            .then(jsonResponse => setSessions(jsonResponse));
+    }, []);
+
+    // Obtendo os dados do formulário
+    const whenTyping = (event) => {
+        setObjSession({ ...objSession, [event.target.name]: event.target.value });
+    }
+
+    // Cadastrar session
+    const storeSession = () => {
+        fetch('http://localhost:8080/api/session', {
+            method: 'post',
+            body: JSON.stringify(objSession),
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(returnData => returnData.json())
+            .then(returnDataConverted => {
+                if (returnDataConverted.id != undefined) {
+                    setSessions([...sessions, returnDataConverted]);
+                    alert('Sessão cadastrada com sucesso');
+                    cleanForm()
+                    window.location.reload();
+                } else {
+                    alert(returnDataConverted[0].errorMessage);
+                }
+            });
+    }
+
+    // Limpar formulário
+    const cleanForm = () => {
+        setObjSession(session);
+    }
+
+    // Retorno
+    return (
+        <div>
+            <div class="card-body">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <div class="container-fluid">
+                        <a class="navbar-brand">Dashboard</a>
+                        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                            <div class="navbar-nav">
+                                <a class="nav-link active" aria-current="page" href="#">Sessões</a>
+                                <a class="nav-link disabled">Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                <div class="row">
+                    {/* Body Início */}
+                    <div class="row-cols-1 row-cols-md-1 g-4">
+                        <div class="container text-center">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="col">
+                                        <div class="card border-dark mb-3">
+                                            <div class="card-header">
+                                                <h1 class="card-title">Sessões</h1>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <div>
+                                                    {/* <p>{JSON.stringify(objSession)}</p> */}
+                                                    {/* <p>{JSON.stringify(sessions)}</p> */}
+                                                    <SessionForm button={btnCadastrar} keyboardEvent={whenTyping} store={storeSession} obj={objSession} />
+                                                    <SessionTable vector={sessions} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col">
+                                    <div class="col">
+                                        <div class="card border-dark mb-3">
+                                            <div class="card-header">
+                                                <h1 class="card-title">Filmes</h1>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <p class="card-text">Em construção.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="col">
+                                        <div class="card border-dark mb-3">
+                                            <div class="card-header">
+                                                <h1 class="card-title">Salas</h1>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <p class="card-text">Em construção.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="col">
+                                        <div class="card border-dark mb-3">
+                                            <div class="card-header">
+                                                <h1 class="card-title">Vendas</h1>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <p class="card-text">Em construção.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default App;
