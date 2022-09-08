@@ -1,4 +1,4 @@
-function SessionTable({ vector }) {
+function SessionTable({ vector, select }) {
     return (
         <table className="table">
             <thead>
@@ -14,7 +14,7 @@ function SessionTable({ vector }) {
                         <tr key={index}>
                             <td>{index+1}</td>
                             <td>{object.hours}</td>
-                            <td><button className="btn btn-success">Selecionar</button></td>
+                            <td><button onClick={() => {select(index)}} className="btn btn-success">Selecionar</button></td>
                         </tr>
                     ))
                 }

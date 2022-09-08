@@ -11,7 +11,7 @@ function App() {
     }
 
     // Use State
-    const [btnCadastrar, setBtnCadastrar] = useState(true);
+    const [btnStore, setBtnStore] = useState(true);
     const [sessions, setSessions] = useState([]);
     const [objSession, setObjSession] = useState(session);
 
@@ -50,9 +50,87 @@ function App() {
             });
     }
 
+    // Alterar uma sessão
+    const updateSession = () => {
+        fetch('http://localhost:8080/api/session/' + objSession.id, {
+            method: 'put',
+            body: JSON.stringify(objSession),
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(returnData => returnData.json())
+            .then(returnDataConverted => {
+                if (returnDataConverted.id != undefined) {
+                    alert('Sessão alterada com sucesso');
+
+                    // Cópia temporária do vetor de sessões
+                    let temporaryVector = [...sessions];
+
+                    // Índice
+                    let index = temporaryVector.findIndex((p) => {
+                        return p.id === objSession.id;
+                    });
+
+                    // Alterar sessão do vetor temporário
+                    temporaryVector[index] = objSession;
+
+                    // Atualizar o vetor de sessões
+                    setSessions(temporaryVector);
+
+                    cleanForm()
+                    // window.location.reload();
+                } else {
+                    alert(returnDataConverted[0].errorMessage + ' o campo ' + returnDataConverted[0].fieldName);
+                }
+            });
+    }
+
+    // Excluir session
+    const deleteSession = () => {
+        fetch('http://localhost:8080/api/session/' + objSession.id, {
+            method: 'delete',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(returnData => returnData.json())
+            .then(returnDataConverted => {
+
+                //Ajustar retorno da api para vir uma mensagem no alert
+                alert('Sessão deletada com sucesso');
+
+                // Cópia temporária do vetor de sessões
+                let temporaryVector = [...sessions];
+
+                // Índice
+                let index = temporaryVector.findIndex((p) => {
+                    return p.id === objSession.id;
+                });
+
+                // Remover sessão do vetor temporário
+                temporaryVector.splice(index, 1);
+
+                // Atualizar o vetor de sessões
+                setSessions(temporaryVector);
+
+                // Limpar formulário
+                cleanForm();
+            });
+    }
+
     // Limpar formulário
     const cleanForm = () => {
         setObjSession(session);
+        setBtnStore(true);
+    }
+
+    // Selecionar produto
+    const selectSession = (index) => {
+        setObjSession(sessions[index]);
+        setBtnStore(false);
     }
 
     // Retorno
@@ -85,8 +163,8 @@ function App() {
                                                 <div>
                                                     {/* <p>{JSON.stringify(objSession)}</p> */}
                                                     {/* <p>{JSON.stringify(sessions)}</p> */}
-                                                    <SessionForm button={btnCadastrar} keyboardEvent={whenTyping} store={storeSession} obj={objSession} />
-                                                    <SessionTable vector={sessions} />
+                                                    <SessionForm button={btnStore} keyboardEvent={whenTyping} store={storeSession} obj={objSession} cancel={cleanForm} deleteSession={deleteSession} updateSession={updateSession} />
+                                                    <SessionTable vector={sessions} select={selectSession} />
                                                 </div>
                                             </div>
                                         </div>
